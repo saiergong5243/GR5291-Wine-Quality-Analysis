@@ -1,0 +1,83 @@
+---
+title: "GR5291 Project： Wine Quality Analysis"
+author: "Saier Gong (sg3772)"
+date: "5/2/2020"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+  html_notebook: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, error = FALSE, warning = FALSE)
+library(dplyr)
+library(ggplot2)
+#library(PerformanceAnalytics)
+#library(nnet)
+#library(mlogit)
+#library(glmnet)
+
+#library(MASS)
+```
+## Part 1 Data Introduction
+
+```{r}
+data<-read.csv(file = "../data/winequality.csv") %>%
+  na.omit() %>%
+  mutate(quality=ifelse(quality<6,0,1)) #%>%
+  #mutate(quality=factor(quality))
+
+#dim(data)
+
+n<-dim(data)[1] #6463 observations
+n.red<-sum(data$type=="red")
+n.white<-sum(data$type=="white")
+p<-dim(data)[2]-1 #12 variables
+
+y<-data$quality #quality class
+```
+
+### 1.1 Data Introduction
+
+This wine quality data set is downloaded from Kaggle, it has 6497 observations and 13 columns, including one categorical explanatory variable "type", 11 quantitative explanatory variables, and one response variable. The reponse variable is the quality of wine, from 1 to 10, which  represents from low quality to high quality.
+
+
+After cleaning the data set, removing some rows with missing values, the data set has 6463 observations. I also modify the response variable: 
+
++ if the quality score is higher than 5, set it as 1, representing high quality;
++ if the quality score is lower than 5, set it as 0, representing low quality.
+
+So now, the data set has 6463 observation rows, 1 categorical variable, 11 quantitative variables and a ${0,1}$ response variable.
+```{r}
+intro<-tibble(variable=names(data),
+              feature=c("categorical",rep("quantitative",11),"dependent"))
+intro[1:6,]
+intro[7:13,]
+
+```
+
+### 1.2 Data Collection
+
+Due to privacy and logistic issues, only physicochemical (inputs) and sensory (the output) variables are available (e.g. there is no data about grape types, wine brand, wine selling price, etc.).
+
+### 1.3 Interesting Question
+
+Through analyzing this wine quality data, I want to show the following interesting topics:
+
++ which feature or combination of several features may contribute most to the taste of wine;
++ how the type of wine may influence the taste of wine;
++ only according to the provided variables, how to make make and choose good wine.
+
+
+
+## Part 2 Conclusions
+
+According to my analysis, I have the following conclusions about the interesting topics:
+
++ The volatile acidity variable has the greatest impact on the quanlity of wines;
++ Given other quantitative variables the same, the estimated odds of high quality in white wine is about $6%$ of the odds of high quality in red wine. Therefore, the type of wine has an influence on quality, and it is more likely to buy fake white wine.
++ With more alcohol and sulphates and with less volatile acidity, the quality of wine is increasing.
+
+
+
